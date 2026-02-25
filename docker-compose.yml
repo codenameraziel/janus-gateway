@@ -1,0 +1,96 @@
+services:
+  # -------------------------------
+  # Serviço Janus (WebRTC Server)
+  # -------------------------------
+  janus:
+    build: ./meetecho
+    container_name: janus
+    networks:
+      - internal_net
+    restart: unless-stopped
+    extra_hosts:
+      - "umbrel:host-gateway"
+    ports:
+      - "8088:8088"       # HTTP API
+      - "8188:8188"       # WebSockets
+      - "7088:7088"       # Admin API
+      - "7888:7888"       # Admin WebSockets
+      - "5004:5004/udp"   # RTP entrada
+      - "5010:5010/udp"   # RTP entrada
+    volumes:
+      - ./meetecho/janus/html:/usr/local/share/janus/demos
+      - ./meetecho/janus/config:/usr/local/etc/janus
+      - ./meetecho/janus/videos:/usr/local/share/janus/video
+      - ./meetecho/janus/log:/usr/local/var/log
+  # -------------------------------
+  # Serviço Web (Frontend estático)
+  # -------------------------------
+  web:
+    image: python:3.11-slim
+    container_name: janus-web
+    working_dir: /srv
+    volumes:
+      - ./meetecho/janus/html:/srv
+    command: python -m http.server 8081
+    ports:
+      - "8081:8081"
+    networks:
+      - internal_net
+    restart: unless-stopped
+    extra_hosts:
+      - "umbrel:host-gateway"
+
+  # -------------------------------
+  # Serviço FFmpeg (Transcoder RTP)
+  # -------------------------------
+  ffmpeg:
+    image: jrottenberg/ffmpeg:4.4-ubuntu
+    container_name: ffmpeg
+    restart: unless-stopped
+    command: [
+      "-re", "-i", "http://umbrel:8080/?action=stream",
+      "-vf", "scale=854:480",
+      "-c:v", "vp8", "-b:v", "1M", "-an",
+      "-payload_type", "96",
+      "-f", "rtp", "rtp://janus:5010"
+    ]
+    networks:
+      - internal_net
+    depends_on:
+      - janus
+    extra_hosts:
+      - "umbrel:host-gateway"
+
+  # -------------------------------
+  # Proxy Reverso (Caddy com Tailscale)
+  # -------------------------------
+  caddy:
+    image: caddy:latest
+    container_name: janus-caddy
+    restart: unless-stopped
+    ports:
+      - "443:443"       # Porta HTTPS padrão
+      - "443:443/udp"   # Necessário para HTTP/3 (QUIC)
+    volumes:
+      - ./caddy:/etc/caddy   # monta toda a pasta (Caddyfile + certificados)
+      - caddy_data:/data
+      - caddy_config:/config
+    depends_on:
+      - janus
+      - web
+    networks:
+      - internal_net
+
+# -------------------------------
+# Rede interna
+# -------------------------------
+networks:
+  internal_net:
+    driver: bridge
+
+# -------------------------------
+# Volumes persistentes
+# -------------------------------
+volumes:
+  caddy_data:
+  caddy_config:

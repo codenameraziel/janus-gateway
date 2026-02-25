@@ -1,0 +1,29 @@
+umbrel.tailc9398a.ts.net {
+    tls /etc/caddy/umbrel.tailc9398a.ts.net.crt /etc/caddy/umbrel.tailc9398a.ts.net.key
+    encode gzip
+
+    # API HTTP do Janus
+    handle /janus* {
+        reverse_proxy janus:8088
+    }
+
+    # WebSockets API
+    handle /ws* {
+        reverse_proxy janus:8188
+    }
+
+    # Admin API HTTP
+    handle /admin* {
+        reverse_proxy janus:7088
+    }
+
+    # Admin WebSockets
+    handle /adminws* {
+        reverse_proxy janus:7888
+    }
+
+    # Frontend demos
+    handle /demos* {
+        reverse_proxy janus-web:8081
+    }
+}
