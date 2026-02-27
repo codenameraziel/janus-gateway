@@ -1,3 +1,5 @@
+version: "3.8"
+
 services:
   # -------------------------------
   # Serviço Janus (WebRTC Server)
@@ -10,18 +12,13 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "umbrel:host-gateway"
-    ports:
-      - "8088:8088"       # HTTP API
-      - "8188:8188"       # WebSockets
-      - "7088:7088"       # Admin API
-      - "7888:7888"       # Admin WebSockets
-      - "5004:5004/udp"   # RTP entrada
-      - "5010:5010/udp"   # RTP entrada
     volumes:
       - ./meetecho/janus/html:/usr/local/share/janus/demos
       - ./meetecho/janus/config:/usr/local/etc/janus
       - ./meetecho/janus/videos:/usr/local/share/janus/video
       - ./meetecho/janus/log:/usr/local/var/log
+    # ❌ sem ports, acessível apenas via Caddy
+
   # -------------------------------
   # Serviço Web (Frontend estático)
   # -------------------------------
@@ -32,13 +29,12 @@ services:
     volumes:
       - ./meetecho/janus/html:/srv
     command: python -m http.server 8081
-    ports:
-      - "8081:8081"
     networks:
       - internal_net
     restart: unless-stopped
     extra_hosts:
       - "umbrel:host-gateway"
+    # ❌ sem ports, acessível apenas via Caddy
 
   # -------------------------------
   # Serviço FFmpeg (Transcoder RTP)
@@ -60,6 +56,7 @@ services:
       - janus
     extra_hosts:
       - "umbrel:host-gateway"
+    # ❌ sem ports, só comunica internamente
 
   # -------------------------------
   # Proxy Reverso (Caddy com Tailscale)
@@ -69,8 +66,8 @@ services:
     container_name: janus-caddy
     restart: unless-stopped
     ports:
-      - "443:4443"       # Porta HTTPS padrão
-      - "443:4443/udp"   # Necessário para HTTP/3 (QUIC)
+      - "443:443"       # Porta HTTPS padrão
+      - "443:443/udp"   # Necessário para HTTP/3 (QUIC)
     volumes:
       - ./caddy:/etc/caddy   # monta toda a pasta (Caddyfile + certificados)
       - caddy_data:/data
