@@ -1,12 +1,13 @@
 octoprint-cam1: {
-    type = "rtp"
-    id = 1
-    description = "OctoPrint Camera #1"
-    video = true
-    videocodec = "vp8"
-    videoport = 5010
-    videopt = 96
-    videortpmap = "VP8/90000"
-    secret = "adminpwd"
+  type = "rtp"
+  id = 1
+  description = "OctoPrint live"
+  video = true
+  videocodec = "vp8"
+  videoport = 5010
+  videopt = 96
+  videortpmap = "VP8/90000"
+  secret = "adminpwd"
 }
+
 
