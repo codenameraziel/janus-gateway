@@ -1,4 +1,6 @@
-FROM ubuntu:22.04
+FROM debian:bullseye
+
+ENV DEBIAN_FRONTEND=noninteractive
 
 # Dependências necessárias
 RUN apt-get update && apt-get install -y \
@@ -22,13 +24,22 @@ RUN apt-get update && apt-get install -y \
     gengetopt \
     libnice-dev \
     libsrtp2-dev \
-    libwebsockets-dev \
     libusrsctp-dev \
     gettext \
     nano \
     coreutils \
     wget \
     && rm -rf /var/lib/apt/lists/*
+
+# Compilar libwebsockets na versão desejada (ex: 4.3.5)
+RUN git clone https://github.com/warmcat/libwebsockets.git /opt/libwebsockets \
+    && cd /opt/libwebsockets \
+    && git checkout v4.3.5 \
+    && mkdir build && cd build \
+    && cmake .. -DCMAKE_BUILD_TYPE=Release -DCMAKE_INSTALL_PREFIX=/usr/local \
+    && make -j$(nproc) \
+    && make install \
+    && ldconfig
 
 # Compilar RNNoise manualmente
 RUN git clone https://github.com/xiph/rnnoise.git /opt/rnnoise \
@@ -55,5 +66,4 @@ ENV PATH="/usr/local/bin:${PATH}"
 # Expor portas típicas do Janus
 EXPOSE 8088 8188 8288 7088 7888 5004/udp 5010/udp
 
-# Comando padrão
 CMD ["janus", "-F", "/usr/local/etc/janus"]

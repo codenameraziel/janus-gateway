@@ -17,7 +17,12 @@ services:
       - ./meetecho/janus/config:/usr/local/etc/janus
       - ./meetecho/janus/videos:/usr/local/share/janus/video
       - ./meetecho/janus/log:/usr/local/var/log
-    # ❌ sem ports, acessível apenas via Caddy
+    ports:
+      - "8088:8088"     # REST API
+      - "7088:7088"     # Admin API
+      - "8289:8289"     # WebSockets
+      - "5004:5004/udp" # RTP audio
+      - "5010:5010/udp" # RTP video
 
   # -------------------------------
   # Serviço Web (Frontend estático)
@@ -34,7 +39,6 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "umbrel:host-gateway"
-    # ❌ sem ports, acessível apenas via Caddy
 
   # -------------------------------
   # Serviço FFmpeg (Transcoder RTP)
@@ -56,7 +60,6 @@ services:
       - janus
     extra_hosts:
       - "umbrel:host-gateway"
-    # ❌ sem ports, só comunica internamente
 
   # -------------------------------
   # Proxy Reverso (Caddy com Tailscale)
