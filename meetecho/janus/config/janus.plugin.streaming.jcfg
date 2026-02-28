@@ -1,6 +1,6 @@
 octoprint-cam1: {
   type = "rtp"
-  id = 3
+  id = 1
   description = "OctoPrint live CAM1"
   video = true
   videocodec = "vp8"
