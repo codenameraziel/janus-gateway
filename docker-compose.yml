@@ -32,7 +32,7 @@ services:
     container_name: janus-web
     working_dir: /srv
     volumes:
-      - ./meetecho/janus/html/demos:/srv
+      - ./meetecho/janus/html:/srv
     command: python -m http.server 8081
     networks:
       - internal_net
