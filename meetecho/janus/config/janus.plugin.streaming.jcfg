@@ -1,13 +1,27 @@
-[octoprint-cam1] 
+rtp-sample: {
   type = "rtp"
   id = 1
-  description = "OctoPrint live"
+  description = "Opus/VP8 live stream coming from external source"
+  audio = true
+  video = true
+  audioport = 5002
+  audiopt = 111
+  audiocodec = "opus"
+  videoport = 5004
+  videopt = 100
+  videocodec = "vp8"
+  videortpmap = "VP8/90000"
+  secret = "adminpwd"
+}
+
+
+octoprint-cam1: {
+  type = "rtp"
+  id = 3
+  description = "OctoPrint 1280x720"
   video = true
   videocodec = "vp8"
   videoport = 5010
   videopt = 96
   videortpmap = "VP8/90000"
-  secret = "adminpwd"
-
-
-
+}
