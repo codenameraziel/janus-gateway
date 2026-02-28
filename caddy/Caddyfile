@@ -6,9 +6,9 @@ umbrel.tailc9398a.ts.net {
         reverse_proxy janus:8088
     }
 
-    # WebSockets API (porta 8289)
+    # WebSockets API 
     handle /ws* {
-        reverse_proxy janus:8289
+        reverse_proxy janus:8188
     }
 
     # Admin API HTTP

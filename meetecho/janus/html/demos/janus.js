@@ -592,7 +592,7 @@ var Janus = (function (factory) {
 		let wsKeepaliveTimeoutId = null;
 		let servers = null;
 		let serversIndex = 0;
-		let server = [ "http://umbrel.tailc9398a.ts.net:8088/janus", "ws://umbrel.tailc9398a.ts.net:8289" ];
+		let server = [ "http://umbrel.tailc9398a.ts.net:8088/janus", "ws://umbrel.tailc9398a.ts.net:8188" ];
 		if(Janus.isArray(server)) {
 			Janus.log("Multiple servers provided (" + server.length + "), will use the first that works");
 			servers = server;
