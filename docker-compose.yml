@@ -21,7 +21,7 @@ services:
       - "8088:8088"     # REST API
       - "7088:7088"     # Admin API
       - "7888:7888"     # Admin WebSockets
-      - "8289:8289"     # WebSockets
+      - "8289:8289"     # WebSockets (mantendo Opção 2)
       - "5004:5004/udp" # RTP audio
       - "5010:5010/udp" # RTP video
 
