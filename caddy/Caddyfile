@@ -1,5 +1,4 @@
 umbrel.tailc9398a.ts.net {
-    tls /etc/caddy/umbrel.tailc9398a.ts.net.crt /etc/caddy/umbrel.tailc9398a.ts.net.key
     encode gzip
 
     # API HTTP do Janus
@@ -7,7 +6,7 @@ umbrel.tailc9398a.ts.net {
         reverse_proxy janus:8088
     }
 
-    # WebSockets API (ajustado para 8289)
+    # WebSockets API (porta 8289)
     handle /ws* {
         reverse_proxy janus:8289
     }
