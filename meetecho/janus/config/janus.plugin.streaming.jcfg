@@ -1,4 +1,4 @@
-octoprint-cam1: {
+[octoprint-cam1] 
   type = "rtp"
   id = 1
   description = "OctoPrint live"
@@ -8,6 +8,6 @@ octoprint-cam1: {
   videopt = 96
   videortpmap = "VP8/90000"
   secret = "adminpwd"
-}
+
 
 
