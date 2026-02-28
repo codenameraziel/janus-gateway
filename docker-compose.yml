@@ -40,6 +40,8 @@ services:
     restart: unless-stopped
     extra_hosts:
       - "umbrel:host-gateway"
+    ports:
+      - "8081:8081"     # Expondo a porta para acesso direto
 
   # -------------------------------
   # Serviço FFmpeg (Transcoder RTP)
