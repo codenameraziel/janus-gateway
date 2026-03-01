@@ -51,12 +51,26 @@ services:
     container_name: ffmpeg
     restart: unless-stopped
     command: [
-      "-re", "-i", "http://umbrel:8080/?action=stream",
-      "-vf", "scale=854:480",
-      "-c:v", "vp8", "-b:v", "1M", "-an",
-      "-payload_type", "96",
-      "-f", "rtp", "rtp://janus:5010"
-    ]
+  "-init_hw_device", "vaapi=intel:/dev/dri/renderD128",
+  "-hwaccel", "vaapi",
+  "-hwaccel_device", "intel",
+  "-filter_hw_device", "intel",
+  "-re",
+  "-i", "http://umbrel:8080/?action=stream",
+  "-vf", "format=nv12,hwupload,scale_vaapi=w=854:h=480",
+  "-c:v", "h264_vaapi",
+  "-profile:v", "constrained_baseline",
+  "-level", "3.1",
+  "-b:v", "1M",
+  "-maxrate", "1.2M",
+  "-bufsize", "2M",
+  "-g", "30",
+  "-an",
+  "-payload_type", "96",
+  "-f", "rtp",
+  "rtp://janus:5010"
+]
+
     networks:
       - internal_net
     depends_on:
@@ -78,6 +92,7 @@ services:
       - ./caddy:/etc/caddy   # monta toda a pasta (Caddyfile + certificados)
       - caddy_data:/data
       - caddy_config:/config
+      - /run/tailscale/tailscaled.sock:/var/run/tailscale/tailscaled.sock
     depends_on:
       - janus
       - web

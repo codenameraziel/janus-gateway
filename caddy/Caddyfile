@@ -1,5 +1,5 @@
-{
-    email ricardo@exemplo.com
+
+    email 8raziel8@gmail.com
 }
 
 umbrel.tailc9398a.ts.net {
@@ -25,10 +25,17 @@ umbrel.tailc9398a.ts.net {
         reverse_proxy janus:7888
     }
 
-    # Frontend demos
+    # Frontend demos (Janus web UI)
     handle /demos* {
         reverse_proxy janus-web:8081
     }
+
+    # Streaming direto
+    handle /streaming* {
+        reverse_proxy janus-web:8081
+    }
+}
+
 
     # Obico API HTTP
     handle /obico* {
