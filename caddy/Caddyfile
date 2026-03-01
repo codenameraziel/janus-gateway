@@ -25,4 +25,9 @@
     handle /demos* {
         reverse_proxy janus-web:8081
     }
+    # Obico API
+    handle /obico* {
+        reverse_proxy obico:3333
+    }
+
 }
