@@ -57,4 +57,4 @@ services:
 
 networks:
   internal_net:
-    driver: bridge
+    external: true
