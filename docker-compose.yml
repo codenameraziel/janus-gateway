@@ -1,9 +1,6 @@
 version: "3.8"
 
 services:
-  # -------------------------------
-  # Serviço Janus (WebRTC Server)
-  # -------------------------------
   janus:
     build: ./meetecho
     container_name: janus
@@ -18,16 +15,13 @@ services:
       - ./meetecho/janus/videos:/usr/local/share/janus/video
       - ./meetecho/janus/log:/usr/local/var/log
     ports:
-      - "8088:8088"     # REST API
-      - "7088:7088"     # Admin API
-      - "7888:7888"     # Admin WebSockets
-      - "8188:8188"     # WebSockets 
-      - "5004:5004/udp" # RTP audio
-      - "5010:5010/udp" # RTP video
+      - "8088:8088"
+      - "7088:7088"
+      - "7888:7888"
+      - "8188:8188"
+      - "5004:5004/udp"
+      - "5010:5010/udp"
 
-  # -------------------------------
-  # Serviço Web (Frontend estático)
-  # -------------------------------
   web:
     image: python:3.11-slim
     container_name: janus-web
@@ -41,11 +35,8 @@ services:
     extra_hosts:
       - "umbrel:host-gateway"
     ports:
-      - "8081:8081"     # Expondo a porta para acesso direto
+      - "8081:8081"
 
-  # -------------------------------
-  # Serviço FFmpeg (Transcoder RTP)
-  # -------------------------------
   ffmpeg:
     image: jrottenberg/ffmpeg:4.4-ubuntu
     container_name: ffmpeg
@@ -64,36 +55,6 @@ services:
     extra_hosts:
       - "umbrel:host-gateway"
 
-  # -------------------------------
-  # Proxy Reverso (Caddy com Tailscale)
-  # -------------------------------
-  caddy:
-    image: caddy:latest
-    container_name: janus-caddy
-    restart: unless-stopped
-    ports:
-      - "443:443"       # Porta HTTPS padrão
-      - "443:443/udp"   # Necessário para HTTP/3 (QUIC)
-    volumes:
-      - ./caddy:/etc/caddy   # monta toda a pasta (Caddyfile + certificados)
-      - caddy_data:/data
-      - caddy_config:/config
-    depends_on:
-      - janus
-      - web
-    networks:
-      - internal_net
-
-# -------------------------------
-# Rede interna
-# -------------------------------
 networks:
   internal_net:
     driver: bridge
-
-# -------------------------------
-# Volumes persistentes
-# -------------------------------
-volumes:
-  caddy_data:
-  caddy_config:
