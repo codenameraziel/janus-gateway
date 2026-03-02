@@ -32,11 +32,11 @@ umbrel.tailc9398a.ts.net {
 
     # Obico API HTTP
     handle /obico* {
-        reverse_proxy obico:3333
+        reverse_proxy obico:3334
     }
 
     # Obico WebSockets
     handle /ws/obico* {
-        reverse_proxy obico:3333
+        reverse_proxy obico:3334
     }
 }
